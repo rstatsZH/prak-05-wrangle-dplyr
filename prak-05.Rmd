@@ -1,0 +1,13 @@
+---
+title: "Praktikum 04"
+name: "Füge deinen Namen hizu"
+date: "Füge ein Datum hinzu"
+output: 
+  html_document: 
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
