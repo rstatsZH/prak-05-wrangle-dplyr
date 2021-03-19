@@ -37,8 +37,6 @@ Daten sind bereits Tidy Data.
 
 ```{r daten-erkunden}
 
-glimpse(penguins)
-penguins
 
 ```
 
@@ -52,7 +50,7 @@ Variablen der Klassen factor und character werden mit einem Text string gefilter
 
 ```{r filter-ein-wert}
 
-filter(penguins, species == "Chinstrap")
+
 
 ```
 
@@ -62,7 +60,7 @@ filter(penguins, species == "Chinstrap")
 
 ```{r filter-mehrere-werte}
 
-filter(penguins, species == "Chinstrap" | species == "Gentoo")
+
 
 ```
 
@@ -70,7 +68,6 @@ filter(penguins, species == "Chinstrap" | species == "Gentoo")
 
 ```{r filter-operator}
 
-filter(penguins, species %in% c("Chinstrap", "Gentoo"))
 
 ```
 
@@ -78,9 +75,6 @@ filter(penguins, species %in% c("Chinstrap", "Gentoo"))
 
 ```{r filter-variablen}
 
-filter(penguins, species == "Adelie", island == "Dream")
-
-filter(penguins, species == "Adelie" & island == "Dream")
 
 ```
 
@@ -92,9 +86,6 @@ Die Pfeife? Die Röhre? Die Leitung? Der Kanal?
 
 ```{r pipe}
 
-penguins %>% 
-  filter(species == "Adelie") %>% 
-  filter(island == "Dream")
 
 ```
 
@@ -104,17 +95,6 @@ Warum? Dazu kommen wir gleich.
 
 ```{r filter-num}
 
-penguins %>% 
-  filter(flipper_length_mm > 200)
-
-penguins %>% 
-  filter(body_mass_g <= 2900)
-
-penguins %>% 
-  filter(species == "Adelie", bill_length_mm > 40)
-
-penguins %>% 
-  filter(species != "Adelie")
 
 
 ```
@@ -134,19 +114,7 @@ Die Funktion `arrange()` ordnet die Zeilen eines Dataframes nach den Werten ausg
 
 ```{r arrange}
 
-penguins %>% 
-  arrange(body_mass_g)
 
-penguins %>% 
-  arrange(desc(body_mass_g))
-
-penguins %>% 
-  arrange(-body_mass_g)
-
-## Was glaubt ihr?
-
-penguins %>% 
-  arrange(-desc(body_mass_g))
 
 ```
 
@@ -159,17 +127,7 @@ Die Funktion `select()` wählt Spalten basierend auf ihrem Namen oder Klasse aus
 
 ```{r select-variablen}
 
-penguins %>% 
-  select(year, island, species)
 
-penguins %>% 
-  select(species, body_mass_g)
-
-penguins %>% 
-  select(species:body_mass_g)
-
-penguins %>% 
-  select(species:body_mass_g, year)
 
 ```
 
@@ -177,17 +135,6 @@ penguins %>%
 
 ```{r select-variablen-ausschliessen}
 
-penguins %>% 
-  select(-island)
-
-penguins %>% 
-  select(!island:bill_depth_mm)
-
-penguins %>% 
-  select(!c(species, flipper_length_mm, year))
-
-penguins %>% 
-  select(-species, -flipper_length_mm, -year)
 
 ```
 
@@ -197,20 +144,7 @@ Es gibt viele Hilfsfunktionen, die select() leistungsfähiger machen. Zum Beispi
 
 ```{r select-helfer}
 
-penguins %>% 
-  select(starts_with("bill"))
 
-penguins %>% 
-  select(ends_with("mm"))
-
-penguins %>% 
-  select(contains("length"))
-
-penguins %>%
-  select(contains("length") | starts_with("bill"))
-
-penguins %>% 
-  select(where(is.numeric))
 
 ```
 
@@ -222,10 +156,6 @@ Erstelle eine Teilmenge von Pinguinen, die nur Beobachtungen für Gentoo Pinguin
 
 ```{r code-sequenzen}
 
-penguins %>% 
-  filter(species == "Gentoo") %>% 
-  select(island, sex, body_mass_g) %>% 
-  arrange(desc(body_mass_g))
 
 ```
 
@@ -238,33 +168,7 @@ Die Funktion `relocate()` wird genutzt um Spalten zu veschieben. Bei der Auswahl
 
 ```{r relocate}
 
-# standardmässig an den Anfang
 
-penguins %>% 
-  relocate(year)
-
-# hinter eine Variable schieben
-
-penguins %>% 
-  relocate(flipper_length_mm, .after = island)
-
-# vor eine Variable schieben
-
-penguins %>% 
-  relocate(bill_length_mm, .before = year)
-
-# mit Helfer Funktionen 
-
-penguins %>% 
-  relocate(starts_with("bill"))
-
-penguins %>% 
-  relocate(where(is.numeric), .after = where(is.factor))
-
-# Mehrere Variablen als Vektor
-
-penguins %>% 
-  relocate(c("sex", "year"))
 
 ```
 
@@ -274,8 +178,8 @@ Die Funktion `rename()` wird genutzt um den Namen einer oder meherer Spalten zu 
 
 ```{r rename-allg, eval=FALSE}
 
-df %>% 
-  rename(neuer_name = alter_name)
+
+
 
 ```
 
@@ -283,13 +187,7 @@ df %>%
 
 ```{r rename-spalte}
 
-penguins %>% 
-  rename(palmer_island = island)
 
-# Q: Warum = und nicht ==
-
-penguins %>% 
-  rename(study_yr = year, mass = body_mass_g)
 
 ```
 
@@ -297,11 +195,6 @@ penguins %>%
 
 ```{r rename-with}
 
-penguins %>% 
-  rename_with(toupper)
-
-penguins %>% 
-  rename_with(toupper, ends_with("mm"))
 
 ```
 
@@ -309,10 +202,9 @@ penguins %>%
 
 Die Funktion `mutate()` wird genutzt um eine neue Spalte zu einem Dataframe hinzuzufügen während die bestehenden Spalten unverändert bleiben. Verallgemeinert sieht dies so aus:
 
-```{r mutate-allg} 
+```{r mutate-allg, eval=FALSE} 
 
-df %>% 
-  mutate(new_column_name = what_it_contains)
+
 
 ```
 
@@ -320,12 +212,8 @@ df %>%
 
 ```{r mutate-spalte-eine}
 
-penguins %>% 
-  mutate(body_mass_kg = body_mass_g / 1000) %>% 
-  relocate(starts_with("body_"))  ## Nutze relocate() um Spalten an den Beginn zu bringen
 
-penguins %>% 
-  mutate(bill_ratio = bill_length_mm / bill_depth_mm) 
+
 
 ```
 
@@ -333,10 +221,7 @@ penguins %>%
 
 ```{r mutate-spalte-mehrere}
 
-penguins %>% 
-  mutate(bill_ratio = bill_length_mm / bill_depth_mm,
-         body_mass_kg = body_mass_g / 1000,
-         flipper_length_m = flipper_length_mm / 1000)
+
 
 ```
 
@@ -344,16 +229,6 @@ penguins %>%
 
 ```{r mutate-fkt}
 
-library(forcats)
 
-penguins %>% 
-  mutate(record_number = seq(1:n())) ## Eine Sequenz von 1 bis zur Anzahl Beobachtungen im Dataframe
-
-penguins %>% 
-  mutate(island = as.character(island))  ## Ändere zu einer Variable der Klasse character
-
-penguins %>% 
-  mutate(island = fct_relevel(island, "Torgersen", "Biscoe", "Dream")) %>%  ## Lege neue Level für eine factor Variable fest 
-  pull(island) ## Eine einzelne Spalte ausgeben
 
 ```
