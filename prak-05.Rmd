@@ -1,13 +1,359 @@
 ---
-title: "Praktikum 04"
+title: "Praktikum 05"
 name: "Füge deinen Namen hizu"
 date: "Füge ein Datum hinzu"
 output: 
   html_document: 
     toc: true
     toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
+
+# Setup Code-chunk
+
+Hat eine besondere Funktion innerhalb eines R Markdown Dokuments und kontrolliert Standardeinstellung für unser Dokument.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Lade Packages
+
+```{r lade-packages}
+
+library(dplyr)
+library(palmerpenguins)
+
+```
+
+# Daten erkunden
+
+Daten sind bereits Tidy Data.
+
+- Jede Variable ist eine Spalte
+- Jede Beobachtung ist is eine Zeile
+- Jeder Wert ist in einer eigenen Zelle
+
+```{r daten-erkunden}
+
+glimpse(penguins)
+penguins
+
+```
+
+# dplyr::filter()
+
+Mit der Funktion `filter()` werden Teilmengen eines Dataframe erstellt indem die Reihen des Dataframe nach von dir bestimmten Kriterien gefiltert werden.
+
+## Filter Text Variablen
+
+Variablen der Klassen factor und character werden mit einem Text string gefiltert.
+
+```{r filter-ein-wert}
+
+filter(penguins, species == "Chinstrap")
+
+```
+
+- Filter für mehrere Werte mit `|` (or) Operator
+- AltGr + 7 (Windows) 
+- option + 7 (Mac)
+
+```{r filter-mehrere-werte}
+
+filter(penguins, species == "Chinstrap" | species == "Gentoo")
+
+```
+
+- Filter für mehrere Werte mit `%in%` Operator
+
+```{r filter-operator}
+
+filter(penguins, species %in% c("Chinstrap", "Gentoo"))
+
+```
+
+- Filter Werte aus verschiedenen Variablen
+
+```{r filter-variablen}
+
+filter(penguins, species == "Adelie", island == "Dream")
+
+filter(penguins, species == "Adelie" & island == "Dream")
+
+```
+
+### Die Pipe %>%
+
+Die Pfeife? Die Röhre? Die Leitung? Der Kanal?
+
+**Tastaturkürzel:** Ctrl/Cmd + Shift + M 
+
+```{r pipe}
+
+penguins %>% 
+  filter(species == "Adelie") %>% 
+  filter(island == "Dream")
+
+```
+
+Warum? Dazu kommen wir gleich.
+
+## Filter numerische Variablen
+
+```{r filter-num}
+
+penguins %>% 
+  filter(flipper_length_mm > 200)
+
+penguins %>% 
+  filter(body_mass_g <= 2900)
+
+penguins %>% 
+  filter(species == "Adelie", bill_length_mm > 40)
+
+penguins %>% 
+  filter(species != "Adelie")
+
+
+```
+
+# Logische Operatoren 
+
+- **kleiner:** < 
+- **kleiner gleich**: <=
+- **grösser**: >
+- **grösser gleich**: >=
+- **gleich**: ==
+- **nicht gleich**: !=
+
+## dplyr::arrange()
+
+Die Funktion `arrange()` ordnet die Zeilen eines Dataframes nach den Werten ausgewählter Spalten.
+
+```{r arrange}
+
+penguins %>% 
+  arrange(body_mass_g)
+
+penguins %>% 
+  arrange(desc(body_mass_g))
+
+penguins %>% 
+  arrange(-body_mass_g)
+
+## Was glaubt ihr?
+
+penguins %>% 
+  arrange(-desc(body_mass_g))
+
+```
+
+
+# dplyr::select()
+
+Die Funktion `select()` wählt Spalten basierend auf ihrem Namen oder Klasse aus. 
+
+## Variablen behalten
+
+```{r select-variablen}
+
+penguins %>% 
+  select(year, island, species)
+
+penguins %>% 
+  select(species, body_mass_g)
+
+penguins %>% 
+  select(species:body_mass_g)
+
+penguins %>% 
+  select(species:body_mass_g, year)
+
+```
+
+## Variablen ausschliessen
+
+```{r select-variablen-ausschliessen}
+
+penguins %>% 
+  select(-island)
+
+penguins %>% 
+  select(!island:bill_depth_mm)
+
+penguins %>% 
+  select(!c(species, flipper_length_mm, year))
+
+penguins %>% 
+  select(-species, -flipper_length_mm, -year)
+
+```
+
+## Helfer Funktionen
+
+Es gibt viele Hilfsfunktionen, die select() leistungsfähiger machen. Zum Beispiel, die Auswahl aller Variablen einer bestimmten Klasse, oder nur die Variablen welche einen bestimmten Textmuster (string pattern) folgen. 
+
+```{r select-helfer}
+
+penguins %>% 
+  select(starts_with("bill"))
+
+penguins %>% 
+  select(ends_with("mm"))
+
+penguins %>% 
+  select(contains("length"))
+
+penguins %>%
+  select(contains("length") | starts_with("bill"))
+
+penguins %>% 
+  select(where(is.numeric))
+
+```
+
+Mehr Hilfsfunktionen: https://dplyr.tidyverse.org/reference/select.html
+
+## Code Sequenzen
+
+Erstelle eine Teilmenge von Pinguinen, die nur Beobachtungen für Gentoo Pinguine enthät, und behalte dann nur Spalten für Insel, Geschlecht und Körpermasse.
+
+```{r code-sequenzen}
+
+penguins %>% 
+  filter(species == "Gentoo") %>% 
+  select(island, sex, body_mass_g) %>% 
+  arrange(desc(body_mass_g))
+
+```
+
+# dplyr::relocate()
+
+Die Funktion `relocate()` wird genutzt um Spalten zu veschieben. Bei der Auswahl einer Spalte wird dieses standarmässig an den Beginn des Dataframe gelegt. Die Position kann mit zwei Argumenten kontrolliert werden:
+
+- `.before` um eine Spalte vor eine andere zu schieben
+- `.after` um eine Spalte hinter eine andere zu schieben
+
+```{r relocate}
+
+# standardmässig an den Anfang
+
+penguins %>% 
+  relocate(year)
+
+# hinter eine Variable schieben
+
+penguins %>% 
+  relocate(flipper_length_mm, .after = island)
+
+# vor eine Variable schieben
+
+penguins %>% 
+  relocate(bill_length_mm, .before = year)
+
+# mit Helfer Funktionen 
+
+penguins %>% 
+  relocate(starts_with("bill"))
+
+penguins %>% 
+  relocate(where(is.numeric), .after = where(is.factor))
+
+# Mehrere Variablen als Vektor
+
+penguins %>% 
+  relocate(c("sex", "year"))
+
+```
+
+# dplyr::rename()
+
+Die Funktion `rename()` wird genutzt um den Namen einer oder meherer Spalten zu ändern. Verallgemeinert sieht dies so aus:
+
+```{r rename-allg, eval=FALSE}
+
+df %>% 
+  rename(neuer_name = alter_name)
+
+```
+
+## Spalten umbennen
+
+```{r rename-spalte}
+
+penguins %>% 
+  rename(palmer_island = island)
+
+# Q: Warum = und nicht ==
+
+penguins %>% 
+  rename(study_yr = year, mass = body_mass_g)
+
+```
+
+## Umbennen mit einer Funktionen
+
+```{r rename-with}
+
+penguins %>% 
+  rename_with(toupper)
+
+penguins %>% 
+  rename_with(toupper, ends_with("mm"))
+
+```
+
+# dplyr::mutate()
+
+Die Funktion `mutate()` wird genutzt um eine neue Spalte zu einem Dataframe hinzuzufügen während die bestehenden Spalten unverändert bleiben. Verallgemeinert sieht dies so aus:
+
+```{r mutate-allg} 
+
+df %>% 
+  mutate(new_column_name = what_it_contains)
+
+```
+
+## Eine neue Spalte hinzufügen
+
+```{r mutate-spalte-eine}
+
+penguins %>% 
+  mutate(body_mass_kg = body_mass_g / 1000) %>% 
+  relocate(starts_with("body_"))  ## Nutze relocate() um Spalten an den Beginn zu bringen
+
+penguins %>% 
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) 
+
+```
+
+## Mehrere Spalte hinzufügen
+
+```{r mutate-spalte-mehrere}
+
+penguins %>% 
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm,
+         body_mass_kg = body_mass_g / 1000,
+         flipper_length_m = flipper_length_mm / 1000)
+
+```
+
+## Mit Funktionen arbeiten
+
+```{r mutate-fkt}
+
+library(forcats)
+
+penguins %>% 
+  mutate(record_number = seq(1:n())) ## Eine Sequenz von 1 bis zur Anzahl Beobachtungen im Dataframe
+
+penguins %>% 
+  mutate(island = as.character(island))  ## Ändere zu einer Variable der Klasse character
+
+penguins %>% 
+  mutate(island = fct_relevel(island, "Torgersen", "Biscoe", "Dream")) %>%  ## Lege neue Level für eine factor Variable fest 
+  pull(island) ## Eine einzelne Spalte ausgeben
+
 ```
