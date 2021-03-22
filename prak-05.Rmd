@@ -108,7 +108,7 @@ Warum? Dazu kommen wir gleich.
 - **gleich**: ==
 - **nicht gleich**: !=
 
-## dplyr::arrange()
+# dplyr::arrange()
 
 Die Funktion `arrange()` ordnet die Zeilen eines Dataframes nach den Werten ausgewählter Spalten.
 
@@ -117,7 +117,6 @@ Die Funktion `arrange()` ordnet die Zeilen eines Dataframes nach den Werten ausg
 
 
 ```
-
 
 # dplyr::select()
 
