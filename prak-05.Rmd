@@ -190,12 +190,6 @@ Die Funktion `rename()` wird genutzt um den Namen einer oder meherer Spalten zu 
 
 ```
 
-## Umbennen mit einer Funktionen
-
-```{r rename-with}
-
-
-```
 
 # dplyr::mutate()
 

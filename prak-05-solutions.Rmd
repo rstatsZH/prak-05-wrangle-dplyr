@@ -93,9 +93,8 @@ Die Pfeife? Die Röhre? Die Leitung? Der Kanal?
 ```{r pipe}
 
 penguins %>% 
-  filter(species == "Adelie") %>% 
-  filter(island == "Dream")
-
+  filter(species == "Adelie",
+         island == "Dream")
 ```
 
 Warum? Dazu kommen wir gleich.
@@ -128,7 +127,7 @@ penguins %>%
 - **gleich**: ==
 - **nicht gleich**: !=
 
-## dplyr::arrange()
+# dplyr::arrange()
 
 Die Funktion `arrange()` ordnet die Zeilen eines Dataframes nach den Werten ausgewählter Spalten.
 
@@ -140,19 +139,12 @@ penguins %>%
 penguins %>% 
   arrange(desc(body_mass_g))
 
-penguins %>% 
-  arrange(-body_mass_g)
-
-## Was glaubt ihr?
-
-penguins %>% 
-  arrange(-desc(body_mass_g))
 
 ```
 
 # dplyr::select()
 
-Die Funktion `select()` wählt Spalten basierend auf ihrem Namen oder Klasse aus. 
+Die Funktion `select()` wählt Spalten basierend auf ihrem Namen aus. 
 
 ## Variablen behalten
 
@@ -208,16 +200,13 @@ penguins %>%
 penguins %>%
   select(contains("length") | starts_with("bill"))
 
-penguins %>% 
-  select(where(is.numeric))
-
 ```
 
-Mehr Hilfsfunktionen: https://dplyr.tidyverse.org/reference/select.html
+Mehr zu Hilfsfunktionen: https://dplyr.tidyverse.org/reference/select.html
 
 ## Code Sequenzen
 
-Erstelle eine Teilmenge von Pinguinen, die nur Beobachtungen für Gentoo Pinguine enthät, und behalte dann nur Spalten für Insel, Geschlecht und Körpermasse.
+Erstelle eine Teilmenge von Pinguinen, die nur Beobachtungen für Gentoo Pinguine enthät, und behalte dann nur Spalten für Insel, Geschlecht und Körpermasse. 
 
 ```{r code-sequenzen}
 
@@ -252,18 +241,6 @@ penguins %>%
 penguins %>% 
   relocate(bill_length_mm, .before = year)
 
-# mit Helfer Funktionen 
-
-penguins %>% 
-  relocate(starts_with("bill"))
-
-penguins %>% 
-  relocate(where(is.numeric), .after = where(is.factor))
-
-# Mehrere Variablen als Vektor
-
-penguins %>% 
-  relocate(c("sex", "year"))
 
 ```
 
@@ -292,17 +269,6 @@ penguins %>%
 
 ```
 
-## Umbennen mit einer Funktionen
-
-```{r rename-with}
-
-penguins %>% 
-  rename_with(toupper)
-
-penguins %>% 
-  rename_with(toupper, ends_with("mm"))
-
-```
 
 # dplyr::mutate()
 
@@ -311,7 +277,7 @@ Die Funktion `mutate()` wird genutzt um eine neue Spalte zu einem Dataframe hinz
 ```{r mutate-allg} 
 
 df %>% 
-  mutate(new_column_name = what_it_contains)
+  mutate(neuer_spalten_name = was_spalte_enthaelt)
 
 ```
 
@@ -320,8 +286,7 @@ df %>%
 ```{r mutate-spalte-eine}
 
 penguins %>% 
-  mutate(body_mass_kg = body_mass_g / 1000) %>% 
-  relocate(starts_with("body_"))  ## Nutze relocate() um Spalten an den Beginn zu bringen
+  mutate(body_mass_kg = body_mass_g / 1000) 
 
 penguins %>% 
   mutate(bill_ratio = bill_length_mm / bill_depth_mm) 
@@ -344,15 +309,18 @@ penguins %>%
 ```{r mutate-fkt}
 
 library(forcats)
+library(ggplot2)
 
 penguins %>% 
   mutate(record_number = seq(1:n())) ## Eine Sequenz von 1 bis zur Anzahl Beobachtungen im Dataframe
 
-penguins %>% 
-  mutate(island = as.character(island))  ## Ändere zu einer Variable der Klasse character
+penguins_fct <- penguins %>% 
+  mutate(year = as_factor(year))
 
-penguins %>% 
-  mutate(island = fct_relevel(island, "Torgersen", "Biscoe", "Dream")) %>%  ## Lege neue Level für eine factor Variable fest 
-  pull(island) ## Eine einzelne Spalte ausgeben
+
+ggplot(penguins_fct, aes(x = bill_length_mm,
+                         y = bill_depth_mm,
+                         color = year)) +
+  geom_point()
 
 ```
