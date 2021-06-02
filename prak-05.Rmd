@@ -78,6 +78,13 @@ Variablen der Klassen factor und character werden mit einem Text string gefilter
 
 ```
 
+- Filter NAs 
+
+```{r filter-na}
+
+
+```
+
 ### Die Pipe %>%
 
 Die Pfeife? Die Röhre? Die Leitung? Der Kanal?

@@ -40,6 +40,9 @@ Daten sind bereits Tidy Data.
 glimpse(penguins)
 penguins
 
+summary(penguins)
+skim(penguins)
+
 ```
 
 # dplyr::filter()
@@ -81,6 +84,23 @@ filter(penguins, species %in% c("Chinstrap", "Gentoo"))
 filter(penguins, species == "Adelie", island == "Dream")
 
 filter(penguins, species == "Adelie" & island == "Dream")
+
+```
+
+- Filter NAs 
+
+```{r filter-na}
+
+skim(penguins)
+
+penguins %>% 
+  filter(!is.na(sex))
+
+filter(penguins, is.na(sex))
+
+penguins_clean <- filter(penguins, !is.na(sex))
+
+filter(penguins_clean, is.na(bill_length_mm))
 
 ```
 
@@ -314,6 +334,12 @@ library(ggplot2)
 penguins %>% 
   mutate(record_number = seq(1:n())) ## Eine Sequenz von 1 bis zur Anzahl Beobachtungen im Dataframe
 
+ggplot(penguins, aes(x = bill_length_mm,
+                         y = bill_depth_mm,
+                         color = year)) +
+  geom_point()
+
+
 penguins_fct <- penguins %>% 
   mutate(year = as_factor(year))
 
@@ -322,5 +348,6 @@ ggplot(penguins_fct, aes(x = bill_length_mm,
                          y = bill_depth_mm,
                          color = year)) +
   geom_point()
+
 
 ```
