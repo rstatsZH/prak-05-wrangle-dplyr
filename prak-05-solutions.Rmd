@@ -41,7 +41,6 @@ glimpse(penguins)
 penguins
 
 summary(penguins)
-skim(penguins)
 
 ```
 
@@ -90,8 +89,6 @@ filter(penguins, species == "Adelie" & island == "Dream")
 - Filter NAs 
 
 ```{r filter-na}
-
-skim(penguins)
 
 penguins %>% 
   filter(!is.na(sex))
@@ -294,7 +291,7 @@ penguins %>%
 
 Die Funktion `mutate()` wird genutzt um eine neue Spalte zu einem Dataframe hinzuzufügen während die bestehenden Spalten unverändert bleiben. Verallgemeinert sieht dies so aus:
 
-```{r mutate-allg} 
+```{r mutate-allg, eval=FALSE} 
 
 df %>% 
   mutate(neuer_spalten_name = was_spalte_enthaelt)
